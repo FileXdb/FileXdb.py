@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 __all__ = ("FileIO", "JsonFileIO", "BinaryFileIO")
 
 
-def create_db(db_name: str, data_dir: str | None):
+def create_db(db_name: str, data_dir: str = None):
     """
     Create a file if it doesn't exist yet.
 
@@ -21,12 +21,12 @@ def create_db(db_name: str, data_dir: str | None):
     if data_dir is not None:
         _db_path = os.path.join(data_dir, db_name)
 
-    # Check if path is already exist or not
-    if not os.path.exists(_db_path):
+        # Check if path is already exist or not
+        if not os.path.exists(_db_path):
 
-        # Check if we need to create data directories
-        if not os.path.exists(data_dir):
-            os.makedirs(data_dir)
+            # Check if we need to create data directories
+            if not os.path.exists(data_dir):
+                os.makedirs(data_dir)
 
     # Create the file by opening it in "a" mode which creates the file if it
     # does not exist yet but does not modify its contents
@@ -52,7 +52,7 @@ class FileIO(ABC):
 
         Any kind of deserialization should go here.
 
-        Return ``None`` if the Database-file is empty.
+        Return empty dict if the Database-file is empty.
         """
 
         raise NotImplementedError('To be overridden!')
@@ -71,7 +71,7 @@ class FileIO(ABC):
 
 
 class BinaryFileIO(FileIO):
-    def __init__(self, db_name: str, data_dir: str | None):
+    def __init__(self, db_name: str, data_dir: str = None):
         """
         Create a new instance.
 
@@ -113,12 +113,16 @@ class BinaryFileIO(FileIO):
         database = None
 
         with open(self._db_file_path, "rb") as file:
+
             # Get the file size by moving the cursor to the file end and reading its location.
             file.seek(0, os.SEEK_END)
             size = file.tell()
 
             # check if size of file is 0
-            if size is not 0:
+            if size:
+                # Bring the cursor to the beginning of Database-file
+                file.seek(0)
+
                 try:
                     # Load whole Database form Database-file
                     database = pickle.load(file)
