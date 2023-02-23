@@ -1,5 +1,6 @@
 from typing import Mapping
 import uuid
+import json
 
 
 def _get_id():
@@ -23,3 +24,19 @@ class Document(dict):
             self.id = self._doc["_id_"]
 
         super().__init__(self._doc)
+
+    def beautify(self) -> str:
+        """
+        Beautify the ``JSON Object`` with new lines & proper indentation.
+
+        Convert `JSON Object`` into `JSON String`` using ``json.dumps()``.
+
+        :return: JSON String
+        """
+
+        # Dumping JSON Object & adding indentation
+        self._doc = json.dumps(self._doc, indent=4)
+
+        return self._doc
+
+
