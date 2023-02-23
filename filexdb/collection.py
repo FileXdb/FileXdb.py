@@ -35,7 +35,7 @@ class Collection:
             self._database[self._col_name] = []
             self._collection: list = self._database[self._col_name]
 
-    def insert(self, document: Mapping) -> int:
+    def insert(self, document: Mapping) -> str:
         """
         Inserts a single Document into the Database.
 
@@ -48,11 +48,15 @@ class Collection:
         if not isinstance(document, Mapping):
             raise ValueError('Document is not a Dictionary')
 
+        # Check if user trying to modify "_id_"
+        if "_id_" in document.keys():
+            raise KeyError(f"You are not allowed to modify key `_id_`")
+
         # Create a Document
         _document = Document(document)
 
-        # Numbers of Document
-        doc_count: int = 0
+        # id of Document
+        _doc_id: str = _document.id
 
         # check Document is already exist or not
         if not self._doc_is_exists(_document.id):
@@ -67,11 +71,11 @@ class Collection:
             # Write current state of Database into the Database-file
             self._binary_file.write(self._database)
 
-            return doc_count + 1
+            return _doc_id
         else:
             raise ValueError(f"Document id `{_document.id}` is already exists")
 
-    def insert_all(self, document_list: List[Mapping]) -> int:
+    def insert_all(self, document_list: List[Mapping]) -> List[str]:
         """
         Inserts a single ``Document`` into the ``Database``.
 
@@ -85,16 +89,15 @@ class Collection:
         if not isinstance(document_list, List):
             raise ValueError('Document is not a List of Dictionary')
 
-        # Numbers of Document
-        doc_count: int = 0
+        # id of Document
+        _doc_id: List[str] = []
 
         # Iterate over all Documents of document_list & Insert one by one.
         for document in document_list:
             # insert every single document in Database & increment ``doc_count``.
-            doc_count += self.insert(document)
+            _doc_id.append(self.insert(document))
 
-        return doc_count
-
+        return _doc_id
 
     """ FIND_ONE 
     def __find_one(self, query: Mapping = None) -> Document | None:
@@ -199,15 +202,18 @@ class Collection:
 
         return _result
 
-    def delete(self, query: Mapping = None) -> int:
+    def delete(self, query: Mapping = None) -> List[str]:
         """
         Delete single or multiple Document when meet the Conditions or ``query``.
+
+        [Recommended]
+        Use unique identifier as ``query``.
 
         :param query: Condition to search Document
         :return: int - amount of effected Document
         """
-        # Effected Documents count
-        _doc_count = 0
+        # IDs of Effected Documents
+        _doc_id: List[str] = []
 
         # Fetching a Documents meet the query
         _documents = self.find(query, None)
@@ -215,12 +221,60 @@ class Collection:
         # Fetch every Document & remove from Collection
         for _doc in _documents:
             self._collection.remove(_doc)
-            _doc_count += 1
+            _doc_id.append(_doc["_id_"])
 
         self._binary_file.write(self._database)
 
-        return _doc_count
+        return _doc_id
 
+    def update(self, document: Mapping, query: Mapping = None) -> List[str]:
+        """
+        Fetch all the Documents mathc the conditions and update them.
+
+        [Recommended]
+        Use a unique identifier as ``query``.
+
+        :param document: New key values to update
+        :param query: Condition to search Document.
+        :return: List of document ID.
+        """
+        _documents = self.find(query)
+        _new_doc = document
+
+        # IDs of Effected Documents
+        _doc_id: List[str] = []
+
+        # Fetch all Documents to update if got multiple.
+        for _doc in _documents:
+            for key, value in _new_doc.items():
+
+                # Check if user trying to modify "_id_"
+                if key == "_id_":
+                    raise KeyError(f"You are not allowed to modify key `{key}`")
+
+                # Update Document
+                # Create new field if needed.
+                _doc[key] = value
+
+            _doc_id.append(_doc["_id_"])
+
+            # Write current state of Database
+            self._binary_file.write(self._database)
+
+        return _doc_id
+
+
+    def count(self, query: Mapping = None, limit: tuple = None) -> int:
+        """
+        Return amount of Document found.
+
+        :param query: Condition to search Document.
+        :param limit: If there is any limit.
+        :return: (int) amount of Document found.
+        """
+        count = len(self.find(query=query, limit=limit))
+
+        return count
 
     def _reset_cursor(self) -> None:
         """
@@ -282,8 +336,6 @@ class Collection:
                     # If it has any value then this is the desired Document.
                     # Else such Document in Collection.
 
-
-
             if 0 not in _bag_of_query:
 
                 # return the Document
@@ -296,16 +348,7 @@ class Collection:
             else:
                 return None
 
-
         return result
-
-
-
-
-    def count(self, query: Mapping = None, limit: tuple = None) -> int:
-        return len(self.find(query=query, limit=limit))
-
-
 
     # ======================== #
     def _doc_is_exists(self, doc_id: str | int) -> bool:
