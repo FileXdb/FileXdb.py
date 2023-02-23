@@ -199,6 +199,27 @@ class Collection:
 
         return _result
 
+    def delete(self, query: Mapping = None) -> int:
+        """
+        Delete single or multiple Document when meet the Conditions or ``query``.
+
+        :param query: Condition to search Document
+        :return: int - amount of effected Document
+        """
+        # Effected Documents count
+        _doc_count = 0
+
+        # Fetching a Documents meet the query
+        _documents = self.find(query, None)
+
+        # Fetch every Document & remove from Collection
+        for _doc in _documents:
+            self._collection.remove(_doc)
+            _doc_count += 1
+
+        self._binary_file.write(self._database)
+
+        return _doc_count
 
 
     def _reset_cursor(self) -> None:
