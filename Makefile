@@ -18,11 +18,11 @@ clean-build:
 
 test-release:
 	python -m pip install --upgrade twine
-	python -m twine upload --repository testpythonpi dist\*
+	python -m twine upload --repository testpypi dist/*
 
 release:
 	python -m pip install --upgrade twine
-	python -m twine upload --repository testpythonpi dist\*
+	python -m twine upload dist/*
 
 
 
@@ -49,7 +49,7 @@ test-release:
 
 release:
 	python3 -m pip install --upgrade twine
-	python3 -m twine upload --repository testpypi dist/*
+	python3 -m twine upload dist/*
 
 
 endif
