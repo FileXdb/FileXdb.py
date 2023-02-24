@@ -16,7 +16,12 @@ clean-build:
 	python -m pip install --upgrade build
 	python -m build
 
+test-release:
+	python -m pip install --upgrade twine
+	python -m twine upload --repository testpythonpi dist\*
+
 release:
+	python -m pip install --upgrade twine
 	python -m twine upload --repository testpythonpi dist\*
 
 
@@ -38,7 +43,12 @@ clean-build:
 
 	python3 -m build
 
+test-release:
+	python3 -m pip install --upgrade twine
+	python3 -m twine upload --repository testpypi dist/*
+
 release:
+	python3 -m pip install --upgrade twine
 	python3 -m twine upload --repository testpypi dist/*
 
 
