@@ -1,3 +1,6 @@
+from pkg_resources import get_distribution, DistributionNotFound
 from .database import FileXdb
-# from .collection import Collection
-# from .document import Document
+
+
+__version__ = "0.1.0"
+
