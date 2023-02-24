@@ -8,13 +8,13 @@ db = FileXdb("testDb", "data/db")
 student_info = db.collection("student_info")
 
 
-def insert_single_document():
+def test_insert():
     assert student_info.insert({"name": "Sam", "roll": "CSE/17/19", "dept": "CSE"})
     assert student_info.insert({"name": "Bob", "roll": "EE/01/18", "dept": "EE", "skill": ["python", "c++"]})
     assert student_info.insert({"name": "Rana", "dept": "CSE"})
 
 
-def insert_multiple_document():
+def test_insert_all():
     assert student_info.insert_all([
         {"name": "Addy", "roll": "ME/57/19", "dept": "ME", "cgpa": 9.05},
         {"name": "Roman", "roll": "ECE/80/13", "dept": "ECE", "skill": ["game design"], "spc": ["Blinder"]},
@@ -23,7 +23,7 @@ def insert_multiple_document():
     )
 
 
-def find_document_1():
+def test_find():
     _query_1 = {"name": "Sam"}
 
     assert student_info.find()                                  # Returns all Documents.
@@ -31,8 +31,7 @@ def find_document_1():
     assert student_info.find(query=_query_1, limit=(1, 3))      # Returns doc[1] to doc[2] matches the ``_query``.
     assert student_info.find(limit=(1, 10))                     # Returns doc[1] to doc[9] of all Documents.
 
-
-def find_document_2():
+    # with multiple query
     _query_2 = {"name": "Sam", "roll": "CSE/17/19"}
 
     assert student_info.find()                                  # Returns all Documents.
@@ -41,7 +40,7 @@ def find_document_2():
     assert student_info.find(limit=(1, 10))                     # Returns doc[1] to doc[9] of all Documents.
 
 
-def delete_document():
+def test_delete():
     assert student_info.delete({"name": "Addy"})
     assert student_info.delete({"name": "Sam", "roll": "CSE/17/19"})
     assert student_info.delete({"name": "Roman", "roll": "ECE/80/13", "dept": "ECE"})
