@@ -157,8 +157,13 @@ class Collection:
 
         if limit:
             if len(limit) == 2:
+
                 _limit_start = limit[0]
                 _limit_end = limit[1]
+
+                # check if lower limit greater than upper limit
+                if _limit_start > _limit_end:
+                    raise ValueError("limit[0] must be less than limit[1].")
             else:
                 raise ValueError(f"limit is a tuple of 2 values, {len(limit)} is given.")
 
@@ -167,7 +172,12 @@ class Collection:
             # Check if it has a limit or not. If it has a limit do limit specific tasks.
             # Else return the whole Collection.
             if limit is not None:
-                _result = self._collection[_limit_start: _limit_end]
+
+                # check if lower limit is valid or not
+                if _limit_start >= len(self._collection):
+                    raise ValueError(f"Lower limit should be smaller than Collection length.\n It must be less than `{len(self._collection)}`. `{_limit_start}` is given.")
+                else:
+                    _result = self._collection[_limit_start: _limit_end]
             else:
                 _result = self._collection
 
@@ -189,8 +199,12 @@ class Collection:
                 # Reset the cursor
                 self._reset_cursor()
 
-                # Travers limited result
-                _result = _result[_limit_start: _limit_end]
+                # check if lower limit is valid or not
+                if _limit_start >= len(_result):
+                    raise ValueError(f"lower limit should be smaller than length of result")
+                else:
+                    # Travers limited result
+                    _result = _result[_limit_start: _limit_end]
 
             else:
                 for i in self._collection:
