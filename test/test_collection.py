@@ -2,7 +2,7 @@ from filexdb import FileXdb
 
 
 # Create an instance of Database
-db = FileXdb("testDb", "data/db")
+db = FileXdb("test_DB", "test_data/db")
 
 # Create a Collection
 student_info = db.collection("student_info")
@@ -36,7 +36,7 @@ def test_find():
 
     assert student_info.find()                                  # Returns all Documents.
     assert student_info.find(query=_query_2)                    # Returns all Documents matches the ``_query``.
-    assert student_info.find(query=_query_2, limit=(1, 3))      # Returns doc[1] to doc[2] matches the ``_query``.
+    assert student_info.find(query=_query_2, limit=(0, 30))      # Returns doc[1] to doc[2] matches the ``_query``.
     assert student_info.find(limit=(1, 10))                     # Returns doc[1] to doc[9] of all Documents.
 
 
