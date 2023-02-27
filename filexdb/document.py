@@ -20,7 +20,9 @@ class Document(dict):
             self._doc = value
             self.id = value["_id_"]
         else:
-            self._doc = (_id_obj | value)
+            self._doc = _id_obj
+            for k, v in value.items():
+                self._doc[k] = v
             self.id = self._doc["_id_"]
 
         super().__init__(self._doc)

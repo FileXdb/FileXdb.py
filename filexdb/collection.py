@@ -133,7 +133,7 @@ class Collection:
         return _result
     """
 
-    def find(self, query: Mapping = None, limit: tuple = None) -> List[Document | None]:
+    def find(self, query=None, limit=None) -> List[Document]:
         """
         Finds all ``Document`` of ``Collection``.
 
@@ -145,17 +145,24 @@ class Collection:
         :param query: Condition to search Document
         :return: List of Document
         """
+
         # Default result
         _result = []
 
         # Make sure the query implements the ``Mapping`` interface.
-        if not isinstance(query, Mapping | None):
-            raise ValueError('Document is not a Dictionary')
+        if query:
+            if not isinstance(query, Mapping):
+                raise ValueError('Document is not a Dictionary')
+
+        # Make sure the query implements the ``Tuple`` interface.
+        if limit:
+            if not isinstance(limit, tuple):
+                raise ValueError('Document is not a Tuple')
 
         # if limit, Check everything ok
         _limit_start = _limit_end = None
 
-        if limit:
+        if limit and type(limit) == type((1, 3)):
             if len(limit) == 2:
 
                 _limit_start = limit[0]
@@ -175,7 +182,8 @@ class Collection:
 
                 # check if lower limit is valid or not
                 if _limit_start >= len(self._collection):
-                    raise ValueError(f"Lower limit should be smaller than Collection length.\n It must be less than `{len(self._collection)}`. `{_limit_start}` is given.")
+                    raise ValueError(
+                        f"Lower limit should be smaller than Collection length.\n It must be less than `{len(self._collection)}`. `{_limit_start}` is given.")
                 else:
                     _result = self._collection[_limit_start: _limit_end]
             else:
@@ -183,7 +191,7 @@ class Collection:
 
             return _result
 
-        elif query is not None:
+        elif query is not None and type(query) == type({}):
             if limit:
                 for i in self._collection:
                     _doc = self._find_document_by_query(query)
@@ -212,11 +220,14 @@ class Collection:
 
                     if _doc:
                         _result += _doc
+                    else:
+                        _result = _result
+
                 self._reset_cursor()
 
         return _result
 
-    def delete(self, query: Mapping = None) -> List[str]:
+    def delete(self, query=None) -> List[str]:
         """
         Delete single or multiple Document when meet the Conditions or ``query``.
 
@@ -241,7 +252,7 @@ class Collection:
 
         return _doc_id
 
-    def update(self, document: Mapping, query: Mapping = None) -> List[str]:
+    def update(self, document: Mapping, query=None) -> List[str]:
         """
         Fetch all the Documents mathc the conditions and update them.
 
@@ -277,8 +288,7 @@ class Collection:
 
         return _doc_id
 
-
-    def count(self, query: Mapping = None, limit: tuple = None) -> int:
+    def count(self, query=None, limit: tuple = None) -> int:
         """
         Return amount of Document found.
 
@@ -297,7 +307,7 @@ class Collection:
         """
         self._cursor = 0
 
-    def _find_document_by_query(self, query: Mapping) -> List | None:
+    def _find_document_by_query(self, query: Mapping) -> List:
         """
         Finds a single ``Document`` of ``Collection``.
 
@@ -309,7 +319,7 @@ class Collection:
         result = []
 
         # Make sure the query implements the ``Mapping`` interface.
-        if not isinstance(query, Mapping | None):
+        if not isinstance(query, Mapping):
             raise ValueError('Document is not a Dictionary')
 
         # Get the length on Collection
@@ -341,7 +351,6 @@ class Collection:
                         # If both values are same, then update ``_bag_of_query[i]`` as 1.
                         _bag_of_query[i] = 1
 
-
                     else:
                         continue
                 else:
@@ -365,7 +374,7 @@ class Collection:
         return result
 
     # ======================== #
-    def _doc_is_exists(self, doc_id: str | int) -> bool:
+    def _doc_is_exists(self, doc_id: str) -> bool:
         # Iterate over all Documents of Collection
         for doc in self._collection:
             if doc["_id_"] == doc_id:
@@ -373,9 +382,9 @@ class Collection:
 
         return False
 
-    def _find_document_by_id(self, doc_id) -> Document | str:
+    def _find_document_by_id(self, doc_id) -> Document:
         for doc in self._collection:
             if doc["_id_"] == doc_id:
                 return doc
             else:
-                return "none"
+                return None
