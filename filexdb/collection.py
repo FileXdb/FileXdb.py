@@ -383,9 +383,9 @@ class Collection:
 
         return False
 
-    def _find_document_by_id(self, doc_id) -> Document | str:
+    def _find_document_by_id(self, doc_id) -> Document:
         for doc in self._collection:
             if doc["_id_"] == doc_id:
                 return doc
             else:
-                return "none"
+                return None
