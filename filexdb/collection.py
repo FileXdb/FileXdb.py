@@ -133,7 +133,7 @@ class Collection:
         return _result
     """
 
-    def find(self, query = None, limit = None) -> List[Document | None]:
+    def find(self, query = None, limit = None) -> List[Document]:
         """
         Finds all ``Document`` of ``Collection``.
 
@@ -145,10 +145,10 @@ class Collection:
         :param query: Condition to search Document
         :return: List of Document
         """
-        if type(limit) == type((1,)):
+        if limit is not None && type(limit) == type((1,)):
             raise TypeError('Limit should be a tuple')
         
-        if type(query) == type({}):
+        if query is not None && type(query) == type({}):
             raise TypeError('Limit should be a JOSN Object')
             
         # Default result
