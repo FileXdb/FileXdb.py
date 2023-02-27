@@ -153,6 +153,10 @@ class Collection:
         if not isinstance(query, Mapping | None):
             raise ValueError('Document is not a Dictionary')
 
+        # Make sure the query implements the ``Mapping`` interface.
+        if not isinstance(limit, tuple | None):
+            raise ValueError('Document is not a Tuple')
+
         # if limit, Check everything ok
         _limit_start = _limit_end = None
 
@@ -371,7 +375,7 @@ class Collection:
         return result
 
     # ======================== #
-    def _doc_is_exists(self, doc_id: str | int) -> bool:
+    def _doc_is_exists(self, doc_id: str) -> bool:
         # Iterate over all Documents of Collection
         for doc in self._collection:
             if doc["_id_"] == doc_id:
