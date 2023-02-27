@@ -216,6 +216,7 @@ class Collection:
                         _result += _doc
                     else:
                         _result = _result
+
                 self._reset_cursor()
 
 
