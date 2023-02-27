@@ -133,7 +133,7 @@ class Collection:
         return _result
     """
 
-    def find(self, query: Mapping = None, limit: tuple = None) -> List[Document | None]:
+    def find(self, query=None, limit=None) -> List[Document]:
         """
         Finds all ``Document`` of ``Collection``.
 
@@ -175,7 +175,8 @@ class Collection:
 
                 # check if lower limit is valid or not
                 if _limit_start >= len(self._collection):
-                    raise ValueError(f"Lower limit should be smaller than Collection length.\n It must be less than `{len(self._collection)}`. `{_limit_start}` is given.")
+                    raise ValueError(
+                        f"Lower limit should be smaller than Collection length.\n It must be less than `{len(self._collection)}`. `{_limit_start}` is given.")
                 else:
                     _result = self._collection[_limit_start: _limit_end]
             else:
@@ -212,6 +213,9 @@ class Collection:
 
                     if _doc:
                         _result += _doc
+                    else:
+                        _result = _result
+
                 self._reset_cursor()
 
         return _result
@@ -276,7 +280,6 @@ class Collection:
             self._binary_file.write(self._database)
 
         return _doc_id
-
 
     def count(self, query: Mapping = None, limit: tuple = None) -> int:
         """
