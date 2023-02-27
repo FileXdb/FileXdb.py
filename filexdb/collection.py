@@ -133,7 +133,7 @@ class Collection:
         return _result
     """
 
-    def find(self, query: Mapping = None, limit = None) -> List[Document | None]:
+    def find(self, query = None, limit = None) -> List[Document | None]:
         """
         Finds all ``Document`` of ``Collection``.
 
@@ -147,6 +147,10 @@ class Collection:
         """
         if type(limit) == type((1,)):
             raise TypeError('Limit should be a tuple')
+        
+        if type(query) == type({}):
+            raise TypeError('Limit should be a JOSN Object')
+            
         # Default result
         _result = []
 
