@@ -133,7 +133,7 @@ class Collection:
         return _result
     """
 
-    def find(self, query: Mapping = None, limit: tuple = None) -> List[Document | None]:
+    def find(self, query=None, limit=None) -> List[Document]:
         """
         Finds all ``Document`` of ``Collection``.
 
@@ -155,7 +155,7 @@ class Collection:
         # if limit, Check everything ok
         _limit_start = _limit_end = None
 
-        if limit:
+        if limit and type(limit) == type((1, 3)):
             if len(limit) == 2:
 
                 _limit_start = limit[0]
@@ -175,7 +175,8 @@ class Collection:
 
                 # check if lower limit is valid or not
                 if _limit_start >= len(self._collection):
-                    raise ValueError(f"Lower limit should be smaller than Collection length.\n It must be less than `{len(self._collection)}`. `{_limit_start}` is given.")
+                    raise ValueError(
+                        f"Lower limit should be smaller than Collection length.\n It must be less than `{len(self._collection)}`. `{_limit_start}` is given.")
                 else:
                     _result = self._collection[_limit_start: _limit_end]
             else:
@@ -183,7 +184,7 @@ class Collection:
 
             return _result
 
-        elif query is not None:
+        elif query is not None and type(query) == type({}):
             if limit:
                 for i in self._collection:
                     _doc = self._find_document_by_query(query)
@@ -212,7 +213,11 @@ class Collection:
 
                     if _doc:
                         _result += _doc
+                    else:
+                        _result = _result
                 self._reset_cursor()
+
+
 
         return _result
 
@@ -277,7 +282,6 @@ class Collection:
 
         return _doc_id
 
-
     def count(self, query: Mapping = None, limit: tuple = None) -> int:
         """
         Return amount of Document found.
@@ -297,7 +301,7 @@ class Collection:
         """
         self._cursor = 0
 
-    def _find_document_by_query(self, query: Mapping) -> List | None:
+    def _find_document_by_query(self, query: Mapping) -> List:
         """
         Finds a single ``Document`` of ``Collection``.
 
