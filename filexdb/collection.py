@@ -145,12 +145,7 @@ class Collection:
         :param query: Condition to search Document
         :return: List of Document
         """
-        if limit is not None and type(limit) == type((1,)):
-            raise TypeError('Limit should be a tuple')
         
-        if query is not None and type(query) == type({}):
-            raise TypeError('Limit should be a JOSN Object')
-            
         # Default result
         _result = []
 
