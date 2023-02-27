@@ -145,17 +145,19 @@ class Collection:
         :param query: Condition to search Document
         :return: List of Document
         """
-        
+
         # Default result
         _result = []
 
         # Make sure the query implements the ``Mapping`` interface.
-        if not isinstance(query, Mapping | None):
-            raise ValueError('Document is not a Dictionary')
+        if query:
+            if not isinstance(query, Mapping):
+                raise ValueError('Document is not a Dictionary')
 
-        # Make sure the query implements the ``Mapping`` interface.
-        if not isinstance(limit, tuple | None):
-            raise ValueError('Document is not a Tuple')
+        # Make sure the query implements the ``Tuple`` interface.
+        if limit:
+            if not isinstance(limit, tuple):
+                raise ValueError('Document is not a Tuple')
 
         # if limit, Check everything ok
         _limit_start = _limit_end = None
@@ -223,11 +225,9 @@ class Collection:
 
                 self._reset_cursor()
 
-
-
         return _result
 
-    def delete(self, query: Mapping = None) -> List[str]:
+    def delete(self, query=None) -> List[str]:
         """
         Delete single or multiple Document when meet the Conditions or ``query``.
 
@@ -252,7 +252,7 @@ class Collection:
 
         return _doc_id
 
-    def update(self, document: Mapping, query: Mapping = None) -> List[str]:
+    def update(self, document: Mapping, query=None) -> List[str]:
         """
         Fetch all the Documents mathc the conditions and update them.
 
@@ -288,7 +288,7 @@ class Collection:
 
         return _doc_id
 
-    def count(self, query: Mapping = None, limit: tuple = None) -> int:
+    def count(self, query=None, limit: tuple = None) -> int:
         """
         Return amount of Document found.
 
@@ -319,7 +319,7 @@ class Collection:
         result = []
 
         # Make sure the query implements the ``Mapping`` interface.
-        if not isinstance(query, Mapping | None):
+        if not isinstance(query, Mapping):
             raise ValueError('Document is not a Dictionary')
 
         # Get the length on Collection
@@ -350,7 +350,6 @@ class Collection:
 
                         # If both values are same, then update ``_bag_of_query[i]`` as 1.
                         _bag_of_query[i] = 1
-
 
                     else:
                         continue
