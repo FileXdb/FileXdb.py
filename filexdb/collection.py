@@ -369,4 +369,12 @@ class Collection:
 
         return JsonArray(result)
 
+    def _doc_is_exists(self, doc_id: str) -> bool:
+        # Iterate over all Documents of Collection
+        for doc in self._collection:
+            if doc["_id_"] == doc_id:
+                return True
+
+        return False
+
 
