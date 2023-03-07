@@ -1,7 +1,7 @@
 import json
 from typing import Mapping, List
 
-from .document import Document
+from .document import Document, JsonArray
 from .fileio import FileIO
 
 
@@ -75,7 +75,7 @@ class Collection:
         else:
             raise ValueError(f"Document id `{_document.id}` is already exists")
 
-    def insert_all(self, document_list: List[Mapping]) -> List[str]:
+    def insert_all(self, document_list: List[Mapping]) -> JsonArray[str]:
         """
         Inserts a single ``Document`` into the ``Database``.
 
@@ -97,7 +97,7 @@ class Collection:
             # insert every single document in Database & increment ``doc_count``.
             _doc_id.append(self.insert(document))
 
-        return _doc_id
+        return JsonArray(_doc_id)
 
     def __find_one(self, query: Mapping = None) -> Document | None:         # Not works, right nom
         """
@@ -132,7 +132,7 @@ class Collection:
 
         return _result
 
-    def find(self, query=None, limit=None) -> List[Document]:
+    def find(self, query=None, limit=None) -> JsonArray[Document]:
         """
         Finds all ``Document`` of ``Collection``.
 
@@ -188,7 +188,7 @@ class Collection:
             else:
                 _result = self._collection
 
-            return _result
+            return JsonArray(_result)
 
         elif query is not None and type(query) == type({}):
             if limit:
@@ -224,9 +224,9 @@ class Collection:
 
                 self._reset_cursor()
 
-        return _result
+        return JsonArray(_result)
 
-    def delete(self, query=None) -> List[str]:
+    def delete(self, query=None) -> JsonArray[str]:
         """
         Delete single or multiple Document when meet the Conditions or ``query``.
 
@@ -249,9 +249,9 @@ class Collection:
 
         self._file_handler.write(self._database)
 
-        return _doc_id
+        return JsonArray(_doc_id)
 
-    def update(self, document: Mapping, query=None) -> List[str]:
+    def update(self, document: Mapping, query=None) -> JsonArray[str]:
         """
         Fetch all the Documents mathc the conditions and update them.
 
@@ -285,7 +285,7 @@ class Collection:
             # Write current state of Database
             self._file_handler.write(self._database)
 
-        return _doc_id
+        return JsonArray(_doc_id)
 
     def count(self, query=None, limit: tuple = None) -> int:
         """
@@ -315,7 +315,7 @@ class Collection:
         """
         self._cursor = 0
 
-    def _find_document_by_query(self, query: Mapping) -> List:
+    def _find_document_by_query(self, query: Mapping) -> JsonArray[Document]:
         """
         Finds a single ``Document`` of ``Collection``.
 
@@ -379,20 +379,6 @@ class Collection:
             else:
                 return None
 
-        return result
+        return JsonArray(result)
 
-    # ======================== #
-    def _doc_is_exists(self, doc_id: str) -> bool:
-        # Iterate over all Documents of Collection
-        for doc in self._collection:
-            if doc["_id_"] == doc_id:
-                return True
 
-        return False
-
-    def _find_document_by_id(self, doc_id) -> Document:
-        for doc in self._collection:
-            if doc["_id_"] == doc_id:
-                return doc
-            else:
-                return None

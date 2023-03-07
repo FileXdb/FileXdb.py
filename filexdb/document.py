@@ -27,18 +27,60 @@ class Document(dict):
 
         super().__init__(self._doc)
 
-    def beautify(self) -> str:
+    def prettify(self) -> str:
         """
         Beautify the ``JSON Object`` with new lines & proper indentation.
 
         Convert `JSON Object`` into `JSON String`` using ``json.dumps()``.
 
-        :return: JSON String
+        :return: JSON Object
         """
 
         # Dumping JSON Object & adding indentation
         self._doc = json.dumps(self._doc, indent=4)
 
         return self._doc
+
+
+
+class JsonArray(list):
+    def __init__(self, _value: list) -> None:
+        self.value = _value
+        super().__init__(self.value)
+
+
+    def prettify(self) -> str:
+        """
+        Beautify the ``JSON Array`` with new lines & proper indentation.
+
+        Convert `JSON Array`` into `JSON Array`` using ``json.dumps()``.
+
+        :return: JSON Array
+        """
+
+        # Dumping JSON Object & adding indentation
+        self.value = json.dumps(self.value, indent=4)
+
+        return self.value
+
+    def docs_count(self) -> int:
+        """
+        Return amount of Document found.
+
+        :return: (int) amount of Document found.
+        """
+        count = len(self.value)
+
+        return count
+
+
+
+
+
+
+
+
+
+
 
 
