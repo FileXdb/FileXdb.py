@@ -287,18 +287,6 @@ class Collection:
 
         return JsonArray(_doc_id)
 
-    def count(self, query=None, limit: tuple = None) -> int:
-        """
-        Return amount of Document found.
-
-        :param query: Condition to search Document.
-        :param limit: If there is any limit.
-        :return: (int) amount of Document found.
-        """
-        count = len(self.find(query=query, limit=limit))
-
-        return count
-
     def rename(self, new_name: str) -> str:
         pass
 
