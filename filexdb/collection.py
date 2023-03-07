@@ -14,12 +14,12 @@ from .fileio import FileIO
 
 
 class Collection:
-    def __init__(self, col_name: str, binary_file: FileIO) -> None:
+    def __init__(self, col_name: str, file_handler: FileIO) -> None:
         self._col_name = col_name
-        self._binary_file = binary_file
+        self._file_handler = file_handler
 
         # Get the data of existing Database or empty database.
-        self._database = self._binary_file.read()
+        self._database = self._file_handler.read()
 
         self._cursor: int = 0
 
@@ -69,7 +69,7 @@ class Collection:
 
             # print(self._database)
             # Write current state of Database into the Database-file
-            self._binary_file.write(self._database)
+            self._file_handler.write(self._database)
 
             return _doc_id
         else:
@@ -99,9 +99,8 @@ class Collection:
 
         return _doc_id
 
-    """ FIND_ONE 
-    def __find_one(self, query: Mapping = None) -> Document | None:
-        "
+    def __find_one(self, query: Mapping = None) -> Document | None:         # Not works, right nom
+        """
         Finds a single ``Document`` of ``Collection``.
 
         If ``query`` is None then returns all the ``Documents`` of ``Collection``.
@@ -110,7 +109,8 @@ class Collection:
 
         :param query: Condition to search Document
         :return: Document
-        "
+        """
+
         # Default result
         _result = {}
 
@@ -131,7 +131,6 @@ class Collection:
             _result = _result[self._cursor]
 
         return _result
-    """
 
     def find(self, query=None, limit=None) -> List[Document]:
         """
@@ -208,7 +207,7 @@ class Collection:
                 self._reset_cursor()
 
                 # check if lower limit is valid or not
-                if _limit_start >= len(_result):
+                if _limit_start >= len(_result) and _limit_start != 0:
                     raise ValueError(f"lower limit should be smaller than length of result")
                 else:
                     # Travers limited result
@@ -248,7 +247,7 @@ class Collection:
             self._collection.remove(_doc)
             _doc_id.append(_doc["_id_"])
 
-        self._binary_file.write(self._database)
+        self._file_handler.write(self._database)
 
         return _doc_id
 
@@ -284,7 +283,7 @@ class Collection:
             _doc_id.append(_doc["_id_"])
 
             # Write current state of Database
-            self._binary_file.write(self._database)
+            self._file_handler.write(self._database)
 
         return _doc_id
 
@@ -300,6 +299,15 @@ class Collection:
 
         return count
 
+    def rename(self, new_name: str) -> str:
+        pass
+
+    def drop(self) -> str:
+        pass
+
+
+
+    # ----------------------------------------------------------------#
     def _reset_cursor(self) -> None:
         """
         Reset Cursor Pointer to 0th index

@@ -71,7 +71,7 @@ class FileIO(ABC):
 
 
 class BinaryFileIO(FileIO):
-    def __init__(self, db_name: str, data_dir: str = None):
+    def __init__(self, db_name: str, data_dir=None):
         """
         Create a new instance.
 
@@ -87,7 +87,7 @@ class BinaryFileIO(FileIO):
 
         self._data_dir = data_dir
 
-        # Adding ``FileXdb`` specific file extention to the Database-file.
+        # Adding ``FileXdb`` specific file extension to the Database-file.
         self._db_name = f"{db_name}.fxdb"
 
         # Setting default Database-file path.
@@ -132,7 +132,7 @@ class BinaryFileIO(FileIO):
                     raise IOError(f"Cannot read file.\n\t`{self._db_name}` is not a database")
 
             else:
-                # Returns an empty dict as
+                # Initiate an empty dict as
                 database = {}
 
         return database
@@ -167,12 +167,85 @@ class BinaryFileIO(FileIO):
 
 
 class JsonFileIO(FileIO):
-    def __init__(self, db_name):
+    def __init__(self, db_name:str, data_dir=None):
+
         super().__init__()
-        self.db_name = db_name
+
+        self._data_dir = data_dir
+
+        # Adding ``JSON`` file extension to the Database-file.
+        self._db_name = f"{db_name}.json"
+
+        # Setting default Database-file path.
+        self._db_file_path = self._db_name
+
+        # Checking if Data Directory is on root or not.
+        if self._data_dir is not None:
+            # Creating Database-file full path by joining data_dir & db_name.
+            self._db_file_path = os.path.join(self._data_dir, self._db_name)
+
+        # Create the Database/File if it doesn't exist
+        create_db(self._db_name, self._data_dir)
 
     def read(self) -> dict:
-        pass
+        """
+        Reads existing Database-file, either it is empty or non-empty.
+
+        If empty returns an empty dict, else returns saved Data.
+
+        :return: Database as a python Dictionary.
+        """
+        database = None
+
+        with open(self._db_file_path, "r") as file:
+
+            # Get the file size by moving the cursor to the file end and reading its location.
+            file.seek(0, os.SEEK_END)
+            size = file.tell()
+
+            # check if size of file is 0
+            if size:
+                # Bring the cursor to the beginning of Database-file
+                file.seek(0)
+
+                try:
+                    # Load whole Database form Database-file
+                    database = json.load(file)
+
+                except io.UnsupportedOperation:
+                    # Through an Unsupported Operation Error.
+                    raise IOError(f"Cannot read file.\n\t`{self._db_name}` is not a database")
+
+            else:
+                # Initiate an empty dict as
+                database = {}
+
+        return database
 
     def write(self, data: dict):
-        pass
+        """
+        Write the current state of entire Database to the Database-file.
+
+        :param data: Dictionary object to write on Database.
+        :return: None.
+        """
+        with open(self._db_file_path, "w") as file:
+
+            # Move the cursor to the beginning of the file just in case.
+            file.seek(0)
+
+            # Serialize the database state using the user-provided arguments
+            serialized = json.dumps(data, indent=4)
+
+            # Write the serialized data to the file
+            try:
+                file.write(serialized)
+            except io.UnsupportedOperation:
+                raise IOError(f"Cannot write to the file.\n\t`{self._db_name}` is not a database")
+
+            # Ensure the file has been written
+            file.flush()
+            os.fsync(file.fileno())
+
+            # Remove data that is behind the new cursor if the file has gotten shorter.
+            file.truncate()
