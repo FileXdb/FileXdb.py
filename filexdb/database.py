@@ -2,7 +2,7 @@ from typing import Dict, Type, List
 
 from .collection import Collection
 from .fileio import BinaryFileIO, JsonFileIO
-
+from .document import JsonArray
 
 class FileXdb:
 
@@ -18,7 +18,7 @@ class FileXdb:
         :param db_name: Name of Database without file extension.
         :param data_dir: Where the Database will be stored.
         """
-
+        self._database = {}
         self._db_name = db_name
         self._data_dir = data_dir
 
@@ -42,9 +42,16 @@ class FileXdb:
 
         return collection
 
-    def show_collections(self):
-        pass
+    def show_collections(self) -> JsonArray:
+        """
+        Shows all collections of database.
+        :return: List Collections.
+        """
+        self._database = self._file_handler.read()
 
+        # Initiating empty result list
+        _result = JsonArray(list(self._database.keys()))
 
+        return _result
 
 
