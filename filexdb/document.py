@@ -1,4 +1,4 @@
-from typing import Mapping
+from typing import Mapping, List
 import uuid
 import json
 
@@ -44,7 +44,7 @@ class Document(dict):
 
 
 class JsonArray(list):
-    def __init__(self, _value: list) -> None:
+    def __init__(self, _value:list) -> None:
         self.value = _value
         super().__init__(self.value)
 
@@ -63,7 +63,7 @@ class JsonArray(list):
 
         return self.value
 
-    def docs_count(self) -> int:
+    def count_item(self) -> int:
         """
         Return amount of Document found.
 
