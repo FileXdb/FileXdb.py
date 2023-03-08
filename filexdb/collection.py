@@ -99,39 +99,6 @@ class Collection:
 
         return JsonArray(_doc_id)
 
-    def __find_one(self, query: Mapping = None) -> Document | None:         # Not works, right nom
-        """
-        Finds a single ``Document`` of ``Collection``.
-
-        If ``query`` is None then returns all the ``Documents`` of ``Collection``.
-
-        If ``query`` is not None then returns only the first occurrence.
-
-        :param query: Condition to search Document
-        :return: Document
-        """
-
-        # Default result
-        _result = {}
-
-        # Make sure the query implements the ``Mapping`` interface.
-        if not isinstance(query, Mapping | None):
-            raise ValueError('Document is not a Dictionary')
-
-
-
-        # Check if has ``query`` or not
-        if query is None:
-            _result = self._collection[self._cursor]
-            self._reset_cursor()
-        else:
-            print(self._cursor)
-            _result = self._find_document_by_query(query)
-            self._reset_cursor()
-            _result = _result[self._cursor]
-
-        return _result
-
     def find(self, query=None, limit=None) -> JsonArray[Document]:
         """
         Finds all ``Document`` of ``Collection``.
