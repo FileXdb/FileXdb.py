@@ -40,6 +40,24 @@ def test_find():
     assert student_info.find(limit=(1, 10))                     # Returns doc[1] to doc[9] of all Documents.
 
 
+def test_count_item():
+    _query_1 = {"name": "Sam"}
+
+    assert student_info.find().count_item()
+    assert student_info.find(query=_query_1).count_item()
+    assert student_info.find(query=_query_1, limit=(1, 3)).count_item()
+    assert student_info.find(limit=(1, 10)).count_item()
+
+
+def test_export():
+    _query_1 = {"name": "Sam"}
+
+    student_info.find().export("test-db-Sam-1", "test_data/export")
+    student_info.find(query=_query_1).export("test-db-Sam-2", "test_data/export")
+    student_info.find(query=_query_1, limit=(1, 3)).export("test-db-Sam-3", "test_data/export")
+    student_info.find(limit=(1, 10)).export("test-db-Sam-4", "test_data/export")
+
+
 def test_delete():
     assert student_info.delete({"name": "Addy"})
     assert student_info.delete({"name": "Sam", "roll": "CSE/17/19"})
