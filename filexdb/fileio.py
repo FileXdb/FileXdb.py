@@ -37,7 +37,7 @@ def create_file(db_name: str, data_dir: str = None):
             pass
 
 
-def pre_process(ext: str, db_name: str, data_dir=None) -> tuple[str, str]:
+def pre_process(ext: str, db_name: str, data_dir=None):
     """
 
     :param ext:
@@ -311,6 +311,9 @@ class Export:
         :param _file_path: Where to export.
         :return: None
         """
-        with open(_file_path, "w") as f:
-            json.dump(_data, fp=f, indent=4)
+        try:
+            with open(_file_path, "w") as f:
+                json.dump(_data, fp=f, indent=4)
 
+        except Exception as e:
+            print(e)

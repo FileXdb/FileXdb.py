@@ -77,8 +77,6 @@ class JsonArray(list):
 
         return count
 
-
-
     def export(self, _file_name, _file_dir=None, _mode="json"):
         """
 
