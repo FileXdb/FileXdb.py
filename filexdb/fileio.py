@@ -4,7 +4,7 @@ import os
 import io
 from abc import ABC, abstractmethod
 
-__all__ = ("FileIO", "JsonFileIO", "BinaryFileIO")
+__all__ = ("FileIO", "JsonFileIO", "BinaryFileIO", "Export")
 
 from typing import Tuple
 

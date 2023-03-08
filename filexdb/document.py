@@ -3,6 +3,7 @@ import uuid
 import json
 from .fileio import Export
 
+__all__ = ("Document", "JsonArray")
 
 def _get_id():
     _id = uuid.uuid1()
@@ -10,7 +11,7 @@ def _get_id():
 
 
 class Document(dict):
-    def __init__(self, value: Mapping) -> None:
+    def __init__(self, value: Mapping, gen_id: bool = True) -> None:
         self.id = None
 
         _id_obj = {
@@ -20,6 +21,8 @@ class Document(dict):
         if "_id_" in value.keys():
             self._doc = value
             self.id = value["_id_"]
+        elif "_id_" not in value.keys() and not gen_id:
+            self._doc = value
         else:
             self._doc = _id_obj
             for k, v in value.items():
