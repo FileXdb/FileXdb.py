@@ -1,6 +1,7 @@
 from typing import Mapping, List
 import uuid
 import json
+from .fileio import Export
 
 
 def _get_id():
@@ -44,7 +45,7 @@ class Document(dict):
 
 
 class JsonArray(list):
-    def __init__(self, _value:list) -> None:
+    def __init__(self, _value: list) -> None:
         self.value = _value
         super().__init__(self.value)
 
@@ -75,6 +76,16 @@ class JsonArray(list):
 
 
 
+    def export(self, _file_name, _file_dir=None, _mode="json"):
+        """
+
+        :param _file_name:
+        :param _file_dir:
+        :param _mode:
+        :return:
+        """
+
+        e = Export(self.value, _file_name, _file_dir, _mode)
 
 
 
