@@ -55,21 +55,23 @@ class FileXdb:
 
         return _result
 
-    def show(self) -> Document:
+    def export(self, _file_name, _file_dir=None, _mode="json"):
         """
+        Export data in to readable file.
+
+        :param _file_name: File name in which data will be exported.
+        :param _file_dir: Parent directory of export file.
+        :param _mode: In which file mode you want to export data.
+        :return: None.
+        """
+
+        e = Export(self._show(), _file_name, _file_dir, _mode)
+
+    def _show(self) -> Document:
+        """
+        Shows the hole Database.
 
         :return: Database
         """
         self._database = self._file_handler.read()
         return Document(self._database, False)
-
-    def export(self, _file_name, _file_dir=None, _mode="json"):
-        """
-
-        :param _file_name:
-        :param _file_dir:
-        :param _mode:
-        :return:
-        """
-
-        e = Export(self.show(), _file_name, _file_dir, _mode)
