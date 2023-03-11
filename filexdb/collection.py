@@ -19,7 +19,7 @@ class Collection:
         self._file_handler = file_handler
 
         # Get the data of existing Database or empty database.
-        self._database = self._file_handler.read()
+        self._database = Document(self._file_handler.read(), False)
 
         self._cursor: int = 0
 
@@ -28,12 +28,12 @@ class Collection:
         if self._col_name in self._database.keys():
 
             # Get the existing Collection
-            self._collection: list = self._database[self._col_name]
+            self._collection: JsonArray = self._database[self._col_name]
 
         else:
             # Create new Collection
-            self._database[self._col_name] = []
-            self._collection: list = self._database[self._col_name]
+            self._database[self._col_name] = JsonArray([])
+            self._collection: JsonArray = self._database[self._col_name]
 
     def insert(self, document: Mapping) -> str:
         """
@@ -254,12 +254,61 @@ class Collection:
 
         return JsonArray(_doc_id)
 
-    def rename(self, new_name: str) -> str:
-        pass
+    def rename(self, new_name: str) -> int:
+        """
+        This method used to change the name of collection.
+        Takes current name & new name to change name of the collection.
 
-    def drop(self) -> str:
-        pass
+        :param new_name: New name for collection.
+        :return: Amount of affected collection.
+        """
 
+        # Initiating counter
+        count = 0
+
+        # Checking the collection is already exist or not
+        if new_name not in self._database.keys():
+
+            # Creating new collection and
+            # Putting old data into new collection
+            self._database[new_name] = self._collection
+
+            # Writing Current database status into the file
+            self._file_handler.write(self._database)
+
+            # Remove old collection
+            self.drop()
+
+            # Increasing counter
+            count += 1
+
+        return count
+
+    def drop(self) -> int:
+        """
+        Deletes the selected collection from the database
+
+        :return: Amount of affected collection
+        """
+
+        # Initiating counter
+        count = 0
+
+        # Getting database
+        _database = self._file_handler.read()
+
+        # Check database has the collection or not
+        if self._col_name in _database.keys():
+            # Removing collection from database
+            _database.pop(self._col_name)
+
+            # Writing current status of database into the file system.
+            self._file_handler.write(_database)
+
+            # Increasing counter
+            count += 1
+
+        return count
 
 
     # ----------------------------------------------------------------#
