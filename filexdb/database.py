@@ -19,7 +19,6 @@ class FileXdb:
         :param db_name: Name of Database without file extension.
         :param data_dir: Where the Database will be stored.
         """
-        self._database = {}
         self._db_name = db_name
         self._data_dir = data_dir
 
@@ -28,6 +27,10 @@ class FileXdb:
             self._file_handler = BinaryFileIO(self._db_name, self._data_dir)
         elif mode == "json":
             self._file_handler = JsonFileIO(self._db_name, self._data_dir)
+
+        # Getting whole database.
+        self._database = self._show()
+
 
     def collection(self, col_name: str) -> Collection:
         """
@@ -65,7 +68,8 @@ class FileXdb:
         :return: None.
         """
 
-        e = Export(self._show(), _file_name, _file_dir, _mode)
+        e = Export(self._database, _file_name, _file_dir, _mode)
+
 
     def _show(self) -> Document:
         """
