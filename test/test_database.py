@@ -6,8 +6,8 @@ db = FileXdb("test_DB", "test_data/db")
 db_2 = FileXdb("NewDb", "test_data/db")
 
 # Create a Collection
-student_info = db.collection("student_info")
-player_info = db.collection("student_info")
+student_info = db_2.collection("student_info")
+player_info = db_2.collection("student_info")
 
 student_info.insert_all([
         {"name": "Addy", "roll": "ME/57/19", "dept": "ME", "cgpa": 9.05},
@@ -23,12 +23,12 @@ def test_show_collections():
 
 
 def test_show():
-    assert db.show()
-    db_2.show()
+    db._show()
+    db_2._show()
 
     # prettify json object
-    assert db.show().prettify()
-    assert db_2.show().prettify()
+    assert db._show().prettify()
+    assert db_2._show().prettify()
 
 
 def test_export():
