@@ -19,21 +19,15 @@ class Collection:
         self._file_handler = file_handler
 
         # Get the data of existing Database or empty database.
-        self._database = self._file_handler.read()
+        self._database = self._get_database()
 
+        # Initiating Collecting
+        self._collection = self._get_collection()
+
+        # Cursor
         self._cursor: int = 0
 
-        # Initiate a default Collection.
-        # Check the Collection is already exists or no.
-        if self._col_name in self._database.keys():
 
-            # Get the existing Collection
-            self._collection: list = self._database[self._col_name]
-
-        else:
-            # Create new Collection
-            self._database[self._col_name] = []
-            self._collection: list = self._database[self._col_name]
 
     def insert(self, document: Mapping) -> str:
         """
@@ -41,9 +35,10 @@ class Collection:
 
         Document should be JSON Object.
 
-        :param document: Document to insert into database
-        :return: None
+        :param document: Document to insert into the database.
+        :return: Document ID.
         """
+
         # Make sure the document implements the ``Mapping`` interface
         if not isinstance(document, Mapping):
             raise ValueError('Document is not a Dictionary')
@@ -52,10 +47,14 @@ class Collection:
         if "_id_" in document.keys():
             raise KeyError(f"You are not allowed to modify key `_id_`")
 
+
+        # getting Database
+        _database = self._get_database()
+
         # Create a Document
         _document = Document(document)
 
-        # id of Document
+        # ID of Document
         _doc_id: str = _document.id
 
         # check Document is already exist or not
@@ -65,11 +64,11 @@ class Collection:
             self._collection.append(_document)
 
             # Add modified Collection to Database
-            self._database[self._col_name] = self._collection
+            _database[self._col_name] = self._collection
 
             # print(self._database)
             # Write current state of Database into the Database-file
-            self._file_handler.write(self._database)
+            self._file_handler.write(_database)
 
             return _doc_id
         else:
@@ -254,15 +253,96 @@ class Collection:
 
         return JsonArray(_doc_id)
 
-    def rename(self, new_name: str) -> str:
-        pass
+    def rename(self, new_name: str) -> int:
+        """
+        This method used to change the name of collection.
+        Takes current name & new name to change name of the collection.
 
-    def drop(self) -> str:
-        pass
+        :param new_name: New name for collection.
+        :return: Amount of affected collection.
+        """
 
+        # Initiating counter
+        count = 0
+
+        # Checking the collection is already exist or not
+        if new_name not in self._database.keys():
+
+            # Creating new collection and
+            # Putting old data into new collection
+            self._database[new_name] = self._collection
+
+            # Writing Current database status into the file
+            self._file_handler.write(self._database)
+
+            # Remove old collection
+            self.drop()
+
+            # Increasing counter
+            count += 1
+
+        return count
+
+    def drop(self) -> int:
+        """
+        Deletes the selected collection from the database
+
+        :return: Amount of affected collection
+        """
+
+        # Initiating counter
+        count = 0
+
+        # Getting database
+        _database = self._file_handler.read()
+
+        # Check database has the collection or not
+        if self._col_name in _database.keys():
+            # Removing collection from database
+            _database.pop(self._col_name)
+
+            # Writing current status of database into the file system.
+            self._file_handler.write(_database)
+
+            # Increasing counter
+            count += 1
+
+        return count
 
 
     # ----------------------------------------------------------------#
+    def _get_database(self) -> Document:
+        """
+        Getting Database
+
+        :return: Database
+        """
+        # Get the data of existing Database or empty database.
+        database = Document(self._file_handler.read(), False)
+
+        return database
+
+    def _get_collection(self) -> JsonArray:
+        """
+        Getting Collection
+
+        :return: Collection
+        """
+        # Initiate a default Collection.
+        # Check the Collection is already exists or no.
+        if self._col_name in self._database.keys():
+
+            # Get the existing Collection
+            _collection: JsonArray = self._database[self._col_name]
+
+        else:
+            # Create new Collection
+            self._database[self._col_name] = JsonArray([])
+            _collection: JsonArray = self._database[self._col_name]
+
+        return _collection
+
+
     def _reset_cursor(self) -> None:
         """
         Reset Cursor Pointer to 0th index
