@@ -22,12 +22,10 @@ class Collection:
         self._database = self._get_database()
 
         # Initiating Collecting
-        self._collection = self._get_collection()
+        self._collection: JsonArray = self._get_collection()
 
         # Cursor
         self._cursor: int = 0
-
-
 
     def insert(self, document: Mapping) -> str:
         """
@@ -47,7 +45,6 @@ class Collection:
         if "_id_" in document.keys():
             raise KeyError(f"You are not allowed to modify key `_id_`")
 
-
         # getting Database
         _database = self._get_database()
 
@@ -55,10 +52,10 @@ class Collection:
         _document = Document(document)
 
         # ID of Document
-        _doc_id: str = _document.id
+        _doc_id: str = str(_document.id)
 
         # check Document is already exist or not
-        if not self._doc_is_exists(_document.id):
+        if not self._doc_is_exists(str(_document.id)):
 
             # Append the document into the Collection
             self._collection.append(_document)
@@ -74,7 +71,7 @@ class Collection:
         else:
             raise ValueError(f"Document id `{_document.id}` is already exists")
 
-    def insert_all(self, document_list: List[Mapping]) -> JsonArray[str]:
+    def insert_all(self, document_list: List[Mapping]) -> JsonArray:
         """
         Inserts a single ``Document`` into the ``Database``.
 
@@ -98,7 +95,7 @@ class Collection:
 
         return JsonArray(_doc_id)
 
-    def find(self, query=None, limit=None) -> JsonArray[Document]:
+    def find(self, query=None, limit=None) -> JsonArray:
         """
         Finds all ``Document`` of ``Collection``.
 
@@ -125,7 +122,7 @@ class Collection:
                 raise ValueError('Document is not a Tuple')
 
         # if limit, Check everything ok
-        _limit_start = _limit_end = None
+        _limit_start = _limit_end = 0
 
         if limit and type(limit) == type((1, 3)):
             if len(limit) == 2:
@@ -192,7 +189,7 @@ class Collection:
 
         return JsonArray(_result)
 
-    def delete(self, query=None) -> JsonArray[str]:
+    def delete(self, query=None) -> JsonArray:
         """
         Delete single or multiple Document when meet the Conditions or ``query``.
 
@@ -217,7 +214,7 @@ class Collection:
 
         return JsonArray(_doc_id)
 
-    def update(self, document: Mapping, query=None) -> JsonArray[str]:
+    def update(self, document: Mapping, query=None) -> JsonArray:
         """
         Fetch all the Documents mathc the conditions and update them.
 
@@ -267,7 +264,6 @@ class Collection:
 
         # Checking the collection is already exist or not
         if new_name not in self._database.keys():
-
             # Creating new collection and
             # Putting old data into new collection
             self._database[new_name] = self._collection
@@ -309,7 +305,6 @@ class Collection:
 
         return count
 
-
     # ----------------------------------------------------------------#
     def _get_database(self) -> Document:
         """
@@ -338,10 +333,9 @@ class Collection:
         else:
             # Create new Collection
             self._database[self._col_name] = JsonArray([])
-            _collection: JsonArray = self._database[self._col_name]
+            _collection = self._database[self._col_name]
 
-        return _collection
-
+        return JsonArray(_collection)
 
     def _reset_cursor(self) -> None:
         """
@@ -350,7 +344,7 @@ class Collection:
         """
         self._cursor = 0
 
-    def _find_document_by_query(self, query: Mapping) -> JsonArray[Document]:
+    def _find_document_by_query(self, query: Mapping) -> JsonArray | None:
         """
         Finds a single ``Document`` of ``Collection``.
 
@@ -423,5 +417,3 @@ class Collection:
                 return True
 
         return False
-
-
