@@ -3,13 +3,14 @@ import pickle
 import os
 import io
 from abc import ABC, abstractmethod
+# from filexdb.document import Document
 
 __all__ = ("FileIO", "JsonFileIO", "BinaryFileIO", "Export")
 
 from typing import Tuple
 
 
-def create_file(db_name: str, data_dir: str = None):
+def create_file(db_name: str, data_dir: str | None):
     """
     Create a file if it doesn't exist yet.
 

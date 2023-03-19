@@ -1,4 +1,4 @@
-from typing import Mapping, List
+from typing import Mapping, List, Any
 import uuid
 import json
 from .fileio import Export
@@ -41,9 +41,9 @@ class Document(dict):
         """
 
         # Dumping JSON Object & adding indentation
-        self._doc = json.dumps(self._doc, indent=4)
+        _doc: str = json.dumps(self._doc, indent=4)
 
-        return self._doc
+        return _doc
 
 
 
@@ -63,9 +63,9 @@ class JsonArray(list):
         """
 
         # Dumping JSON Object & adding indentation
-        self.value = json.dumps(self.value, indent=4)
+        value: str = json.dumps(self.value, indent=4)
 
-        return self.value
+        return value
 
     def count_item(self) -> int:
         """

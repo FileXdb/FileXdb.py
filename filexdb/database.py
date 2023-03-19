@@ -1,7 +1,7 @@
 from typing import Dict, Type, List
 
 from .collection import Collection
-from .fileio import BinaryFileIO, JsonFileIO, Export
+from .fileio import FileIO, BinaryFileIO, JsonFileIO, Export
 from .document import JsonArray, Document
 
 
@@ -21,6 +21,7 @@ class FileXdb:
         """
         self._db_name = db_name
         self._data_dir = data_dir
+        self._file_handler: FileIO
 
         # Creating an instance of FileIO to Read Write Database-File.
         if mode == "binary":
@@ -51,7 +52,7 @@ class FileXdb:
         Shows all collections of database.
         :return: List Collections.
         """
-        self._database = self._file_handler.read()
+        self._database = Document(self._file_handler.read(), False)
 
         # Initiating empty result list
         _result = JsonArray(list(self._database.keys()))
@@ -77,5 +78,5 @@ class FileXdb:
 
         :return: Database
         """
-        self._database = self._file_handler.read()
+        self._database = Document(self._file_handler.read(), False)
         return Document(self._database, False)
