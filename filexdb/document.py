@@ -5,6 +5,7 @@ from .fileio import Export
 
 __all__ = ("Document", "JsonArray")
 
+
 def _get_id():
     _id = uuid.uuid1()
     return _id.hex

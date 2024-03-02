@@ -4,12 +4,12 @@ build:
 	python -m build
 
 clean:
-	if exist "./build" rd /s /q build
+	# if exist "./build" rd /s /q build
 	if exist "./dist" rd /s /q dist
 	if exist "./filexdb.egg-info" rd /s /q filexdb.egg-info
 
 clean-build:
-	if exist "./build" rd /s /q build
+	# if exist "./build" rd /s /q build
 	if exist "./dist" rd /s /q dist
 	if exist "./filexdb.egg-info" rd /s /q filexdb.egg-info
 
@@ -22,7 +22,7 @@ test-release:
 
 release:
 	python -m pip install --upgrade twine
-	python -m twine upload dist/*
+	python -m twine upload --skip-existing dist/*
 
 
 
@@ -53,3 +53,5 @@ release:
 
 
 endif
+
+#pypi-AgEIcHlwaS5vcmcCJDk5YjczZWY3LWIxNDAtNDE1ZC1iOTM3LTY3MTdmZjdhNTQ2MAACD1sxLFsiZmlsZXhkYiJdXQACLFsyLFsiMDUzOTY1MTQtZWU1OC00YzZmLTk0OWEtZGUzOWRhYTYyYzhhIl1dAAAGIE9ej3NpTEITK28hMaLoyloMCkS9ENOh0NZAt3R_rzAa

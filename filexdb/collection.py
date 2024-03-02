@@ -145,7 +145,9 @@ class Collection:
                 # check if lower limit is valid or not
                 if _limit_start >= len(self._collection):
                     raise ValueError(
-                        f"Lower limit should be smaller than Collection length.\n It must be less than `{len(self._collection)}`. `{_limit_start}` is given.")
+                        f"""Lower limit should be smaller than Collection length.\n 
+                        It must be less than `{len(self._collection)}`. `{_limit_start}` is given."""
+                    )
                 else:
                     _result = self._collection[_limit_start: _limit_end]
             else:
